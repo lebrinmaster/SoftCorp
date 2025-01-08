@@ -1,52 +1,35 @@
 <template>
   <v-app>
-    <v-app-bar app color="primary" dark>
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
-
-      <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
-    </v-app-bar>
+    <NavBar />
 
     <v-main>
-      <router-view />
+      <v-container class="grey lighten-5">
+        <v-row no-gutters>
+          <v-col cols="12" sm="6">
+            <ShoppingList />
+          </v-col>
+          <v-col cols="12" sm="6">
+            <ShoppingCart />
+            Общая стоимость: Р 12350.50
+          </v-col>
+        </v-row>
+      </v-container>
     </v-main>
   </v-app>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { Component, Vue } from "vue-property-decorator";
+import NavBar from "./components/NavBar.vue";
+import ShoppingCart from "./components/ShoppingCart.vue";
+import ShoppingList from "./components/ShoppingList.vue";
 
-export default Vue.extend({
-  name: "App",
-
-  data: () => ({
-    //
-  }),
-});
+@Component({
+  components: {
+    NavBar,
+    ShoppingCart,
+    ShoppingList
+  }
+})
+export default class App extends Vue { }
 </script>
