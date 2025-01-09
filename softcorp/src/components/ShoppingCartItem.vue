@@ -1,26 +1,44 @@
 <template>
     <div class="shopping-cart__item">
         <div style="gap: 0 16px;" class="d-flex">
-            <v-chip class="shopping-cart__item--chip" label outlined color="orange" dense>Test</v-chip>
-            <span class="d-flex align-center"> Htvtym </span>
+            <v-chip class="shopping-cart__item--chip" label outlined color="orange" dense>{{data.G}}</v-chip>
+            <span class="d-flex align-center"> {{data.T}} </span>
         </div>
         <div class="d-flex align-center shopping-cart__item--action">
-            <v-text-field style="max-width: 80px;" class="d-block" v-model="itemQuantity" solo dense hide-details />
+            <v-text-field min="1" :max="data.P" type="number" style="max-width: 80px;" class="d-block" :value="itemQuantity" solo dense hide-details @input="onItemQuantityChange" />
             <v-divider vertical class="ml-4 mr-2" />
-            <v-btn outlined raised text disabled x-small>P 12356</v-btn>
+            <v-btn outlined raised text disabled x-small>{{currencyExchangedValue}}</v-btn>
             <v-divider vertical class="ml-4 mr-2" />
-            <v-btn elevation="2" color="error">
+            <v-btn elevation="2" color="error" @click="onShoppingCartItemDelete">
                 <v-icon error> mdi-delete </v-icon>
             </v-btn>
         </div>
     </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Prop } from "vue-property-decorator";
+import store from '../store';
+import { IAdaptedData } from '../adapters/dataAdapter';
 
 @Component
 export default class ShoppingCartItem extends Vue {
-    public itemQuantity = 5;
+    @Prop() public data;
+
+    public get itemQuantity():number {
+        return this.data.itemNumber;
+    }
+
+    public get currencyExchangedValue(): string {
+        return `₽ ${store.state.currencyExchangeValue * this.data.P}`;
+    }
+
+    public onItemQuantityChange(num: number):void {
+        store.commit('changeShoppingCartItemQuantity', {id: this.data.T, num})
+    }
+
+    public onShoppingCartItemDelete():void {
+        store.commit('deleteShoppingCartItem', this.data.T)
+    }
 }
 </script>
 <style lang="less" scoped>

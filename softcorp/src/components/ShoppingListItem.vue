@@ -4,7 +4,7 @@
         <div class="d-flex align-center ml-8">
             <v-btn outlined raised text disabled x-small> {{currencyExchangedValue}}</v-btn>
             <v-divider vertical class="ml-4 mr-2"/>
-            <v-btn elevation="2" color="primary" small> <v-icon>mdi-cart</v-icon> Купить</v-btn>
+            <v-btn elevation="2" color="primary" small @click="addToCart"> <v-icon>mdi-cart</v-icon> Купить</v-btn>
         </div>
     </div>
 </template>
@@ -18,6 +18,10 @@ export default class ShoppingListItem extends Vue {
 
     public get currencyExchangedValue(): string {
         return `₽ ${store.state.currencyExchangeValue * this.data.P}`;
+    }
+
+    public addToCart():void {
+        store.commit('addToShoppingCart', this.data);
     }
 }
 </script>
