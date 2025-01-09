@@ -6,7 +6,7 @@
       <v-container class="grey lighten-5">
         <v-row no-gutters>
           <v-col cols="12" sm="6">
-            <ShoppingList />
+            <ShoppingList :data="data"/>
           </v-col>
           <v-col cols="12" sm="6">
             <ShoppingCart />
@@ -23,6 +23,7 @@ import { Component, Vue } from "vue-property-decorator";
 import NavBar from "./components/NavBar.vue";
 import ShoppingCart from "./components/ShoppingCart.vue";
 import ShoppingList from "./components/ShoppingList.vue";
+import { shoppingCarouselAdapter } from "./adapters/dataAdapter";
 
 @Component({
   components: {
@@ -31,5 +32,12 @@ import ShoppingList from "./components/ShoppingList.vue";
     ShoppingList
   }
 })
-export default class App extends Vue { }
+
+
+export default class App extends Vue {
+  public data = null;
+  public mounted(): void {
+    this.data = shoppingCarouselAdapter();
+  }
+}
 </script>
