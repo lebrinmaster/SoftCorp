@@ -1,8 +1,3 @@
-import dataJson from "../../data.json";
-import namesJson from "../../names.json";
-
-const dataArray: IData[] = dataJson.Value.Goods;
-const namesArray = namesJson;
 
 export interface IData {
   B: boolean;
@@ -23,15 +18,18 @@ export interface IAdaptedData {
   T: string;
 }
 
-export const initFetch = () => {
+export const adaptData = (data, names) => {
+  const dataArray = [...data];
+  const namesObject = { ...names };
   //Adapt data.json with Keys
-  const adaptedArray: IAdaptedData[] = dataArray.map((item: IData) => {
+  const adaptedArray = dataArray.map((item) => {
     //set Goods Category
     const productCategoryId = item.G;
-    const adaptedItem = Object.assign(item);
-    adaptedItem!.G = namesArray[productCategoryId]!.G;
-    adaptedItem!.T = namesArray[productCategoryId]!.B[item.T].N;
-    return { ...adaptedItem } as IAdaptedData;
+    const adaptedItem = Object.create(item);
+    adaptedItem!.G = namesObject[productCategoryId]!.G;
+    adaptedItem!.T = namesObject[productCategoryId]!.B[item.T].N;
+    adaptedItem!.P = item.P;
+    return { ...adaptedItem };
   });
   //Map Data for accordion component
   let currentCategory = "";

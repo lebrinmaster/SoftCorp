@@ -1,4 +1,4 @@
-import { IAdaptedData } from "@/adapters/dataAdapter";
+import { adaptData, IAdaptedData } from "@/adapters/dataAdapter";
 import Vue from "vue";
 import Vuex from "vuex";
 
@@ -6,15 +6,16 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    dataJson: null,
+    adaptedData: null,
     currencyExchangeValue: 90,
     shoppingCart: [],
     shoppingCartIdStack: [],
     shoppingCartOverallPrice: 0,
+    priceGoUp: null,
   },
   mutations: {
-    setData(state, payload): void {
-      state.dataJson = payload.dataJson.Value.Goods;
+    fetchData(state, { data, names }): void {
+      state.adaptedData = adaptData(data, names);
     },
     setCurrencyValue(state, payload: number): void {
       state.currencyExchangeValue = Number(payload);
@@ -59,10 +60,16 @@ export default new Vuex.Store({
         (item) => item !== payload
       );
     },
-  },
-  actions: {
-    fetchDataJSON(state): void {
-      //state.commit("setData", { dataJson });
+    updateCurrencyExchangeValue(state, value?: number) {
+      const number = value ?? Math.floor(Math.random() * (80 - 20) + 20);
+      if (number === state.currencyExchangeValue) {
+        state.priceGoUp = null;
+      } else if (number > state.currencyExchangeValue) {
+        state.priceGoUp = true;
+      } else {
+        state.priceGoUp = false;
+      }
+      this.commit("setCurrencyValue", number);
     },
   },
   getters: {
@@ -70,7 +77,10 @@ export default new Vuex.Store({
       if (!state.shoppingCart.length) {
         return 0;
       } else if (state.shoppingCart.length === 1) {
-        return state.currencyExchangeValue * (state.shoppingCart[0].P * state.shoppingCart[0].itemNumber);
+        return (
+          state.currencyExchangeValue *
+          (state.shoppingCart[0].P * state.shoppingCart[0].itemNumber)
+        );
       }
       const sum = state.shoppingCart.reduce(
         (a, b) => a.P * a.itemNumber + b.P * b.itemNumber

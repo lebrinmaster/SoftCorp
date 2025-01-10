@@ -3,7 +3,7 @@
         <div class="d-flex align-center">
             <v-text-field min="1" type="number" :value="currencyValue" dense outlined label="Kурс" prepend-inner-icon="₽" @input="onCurrencyValueChange" />
         </div>
-        <div class="d-flex align-center">Обновление через: {{ counter }} <v-btn icon color="primary"><v-icon>mdi-refresh</v-icon></v-btn></div>
+        <div id="timer" class="d-flex align-center" >{{ counter }} <v-btn :disabled="countDown !== 0" icon color="primary" @click="triggerCountDownTimer"><v-icon>mdi-refresh</v-icon></v-btn></div>
     </div>
 </template>
 <script lang="ts">
@@ -12,19 +12,39 @@ import store from '../store';
 
 @Component
 export default class NavBar extends Vue {
-    public counter = 1245;
+    public countDown = 15;
+    public get counter(): string {
+        return `Обновление через: ${this.countDown} секунд`
+    }
     public get currencyValue() {
         return Math.abs(store.state.currencyExchangeValue);
     }
 
-    public onCurrencyValueChange(payload: string) {
-        const value = Math.abs(+payload);
-        if(!value) {
-            store.commit('setCurrencyValue', 1);
-        }
-        if(value) {
-            store.commit('setCurrencyValue', value);
-        }
+    public triggerCountDownTimer() {
+        this.countDown = 15;
+        this.$emit('refetchData');
+        this.countDownTimer();
+    }
+
+    public countDownTimer(): void {
+        const interval = setInterval(() => {
+            this.countDown--;
+            if(this.countDown === 0) {
+                store.commit('updateCurrencyExchangeValue');
+                clearInterval(interval);
+            }
+        }, 1000);
+    }
+    
+
+    public mounted(): void {
+        this.countDownTimer();
+    }
+
+    public onCurrencyValueChange(num: string) {
+        const value = Math.abs(+num);
+        const payload: number = value ?? 1;
+        store.commit('updateCurrencyExchangeValue', payload);
     }
 }
 </script>

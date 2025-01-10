@@ -7,7 +7,7 @@
         <div class="d-flex align-center shopping-cart__item--action">
             <v-text-field min="1" :max="data.P" type="number" style="max-width: 80px;" class="d-block" :value="itemQuantity" solo dense hide-details @input="onItemQuantityChange" />
             <v-divider vertical class="ml-4 mr-2" />
-            <v-btn outlined raised text disabled x-small>{{currencyExchangedValue}}</v-btn>
+            <v-btn :color="priceTrend" outlined raised text x-small>{{currencyExchangedValue}}</v-btn>
             <v-divider vertical class="ml-4 mr-2" />
             <v-btn elevation="2" color="error" @click="onShoppingCartItemDelete">
                 <v-icon error> mdi-delete </v-icon>
@@ -22,6 +22,11 @@ import store from '../store';
 @Component
 export default class ShoppingCartItem extends Vue {
     @Prop() public data;
+
+    public get priceTrend(): string {
+        if(store.state.priceGoUp == null) return '';
+        return store.state.priceGoUp ? 'error' : 'success' ;
+    }
 
     public get itemQuantity():number {
         return this.data.itemNumber;

@@ -1,12 +1,12 @@
 <template>
   <v-app>
-    <NavBar />
+    <NavBar @refetchData="fetchData"/>
 
     <v-main>
       <v-container class="grey lighten-5">
         <v-row no-gutters>
           <v-col cols="12" sm="6">
-            <ShoppingList :data="data"/>
+            <ShoppingList :data="data" />
           </v-col>
           <v-col cols="12" sm="6">
             <ShoppingCart />
@@ -23,8 +23,9 @@ import { Component, Vue } from "vue-property-decorator";
 import NavBar from "./components/NavBar.vue";
 import ShoppingCart from "./components/ShoppingCart.vue";
 import ShoppingList from "./components/ShoppingList.vue";
-import { initFetch } from "./adapters/dataAdapter";
 import store from "./store";
+import rawDataJson from '../data.json' assert { type: 'json' };
+import rawNamesJson from "../names.json" assert { type: 'json' };
 
 @Component({
   components: {
@@ -37,8 +38,14 @@ import store from "./store";
 
 export default class App extends Vue {
   public data = null;
-  public mounted(): void {
-    this.data = initFetch();
+
+  public created(): void {
+    this.fetchData();
+    this.data = store.state.adaptedData;
+  }
+
+  public fetchData() {
+    store.commit('fetchData', { data: rawDataJson.Value.Goods, names: rawNamesJson })
   }
 
   public get overallPrice(): number {
