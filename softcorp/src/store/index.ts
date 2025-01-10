@@ -10,6 +10,7 @@ export default new Vuex.Store({
     currencyExchangeValue: 90,
     shoppingCart: [],
     shoppingCartIdStack: [],
+    shoppingCartOverallPrice: 0,
   },
   mutations: {
     setData(state, payload): void {
@@ -27,13 +28,11 @@ export default new Vuex.Store({
           const index = state.shoppingCart.findIndex(
             (item) => item.T === payload.T
           );
-          console.log(state.shoppingCart[index].itemNumber);
           state.shoppingCart[index].itemNumber++;
           Vue.set(state.shoppingCart, index, {
             ...state.shoppingCart[index],
             itemNumber: state.shoppingCart[index].itemNumber++,
           });
-          console.log(state.shoppingCart[index].itemNumber);
         } else {
           state.shoppingCartIdStack.push(payload.T);
           state.shoppingCart.push({ ...payload, itemNumber: 1 });
@@ -64,6 +63,19 @@ export default new Vuex.Store({
   actions: {
     fetchDataJSON(state): void {
       //state.commit("setData", { dataJson });
+    },
+  },
+  getters: {
+    getShoppingCartOverallPrice(state) {
+      if (!state.shoppingCart.length) {
+        return 0;
+      } else if (state.shoppingCart.length === 1) {
+        return state.currencyExchangeValue * (state.shoppingCart[0].P * state.shoppingCart[0].itemNumber);
+      }
+      const sum = state.shoppingCart.reduce(
+        (a, b) => a.P * a.itemNumber + b.P * b.itemNumber
+      );
+      return state.currencyExchangeValue * sum;
     },
   },
 });

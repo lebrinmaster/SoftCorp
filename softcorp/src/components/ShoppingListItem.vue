@@ -4,7 +4,7 @@
         <div class="d-flex align-center ml-8">
             <v-btn outlined raised text disabled x-small> {{currencyExchangedValue}}</v-btn>
             <v-divider vertical class="ml-4 mr-2"/>
-            <v-btn elevation="2" color="primary" small @click="addToCart"> <v-icon>mdi-cart</v-icon> Купить</v-btn>
+            <v-btn :disabled="isDisabled" elevation="2" color="primary" small @click="addToCart"> <v-icon>mdi-cart</v-icon> Купить</v-btn>
         </div>
     </div>
 </template>
@@ -16,11 +16,22 @@ import store from '../store';
 export default class ShoppingListItem extends Vue {
     @Prop() public data;
 
+    public get isDisabled(): boolean {
+        if(!this.data || !store.state.shoppingCart.length) {
+            return false;
+        }
+        const item = store.state.shoppingCart?.filter((item) => item.T === this.data.T) ?? [];
+        if(item.length) {
+            return item[0].itemNumber >= this.data.P;
+        }
+        return false;
+    }
+
     public get currencyExchangedValue(): string {
         return `₽ ${store.state.currencyExchangeValue * this.data.P}`;
     }
 
-    public addToCart():void {
+    public addToCart(): void {
         store.commit('addToShoppingCart', this.data);
     }
 }

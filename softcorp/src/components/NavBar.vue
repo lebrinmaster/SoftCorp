@@ -1,7 +1,7 @@
 <template>
     <div class="navbar">
         <div class="d-flex align-center">
-            <v-text-field type="number" :value="currencyValue" dense outlined label="Kурс" prepend-inner-icon="₽" @input="onCurrencyValueChange" />
+            <v-text-field min="1" type="number" :value="currencyValue" dense outlined label="Kурс" prepend-inner-icon="₽" @input="onCurrencyValueChange" />
         </div>
         <div class="d-flex align-center">Обновление через: {{ counter }} <v-btn icon color="primary"><v-icon>mdi-refresh</v-icon></v-btn></div>
     </div>
@@ -13,14 +13,17 @@ import store from '../store';
 @Component
 export default class NavBar extends Vue {
     public counter = 1245;
-    public currencyValue = store.state.currencyExchangeValue;
+    public get currencyValue() {
+        return Math.abs(store.state.currencyExchangeValue);
+    }
 
     public onCurrencyValueChange(payload: string) {
-        if(!payload) {
+        const value = Math.abs(+payload);
+        if(!value) {
             store.commit('setCurrencyValue', 1);
         }
-        if(Number(payload)) {
-            store.commit('setCurrencyValue', payload);
+        if(value) {
+            store.commit('setCurrencyValue', value);
         }
     }
 }

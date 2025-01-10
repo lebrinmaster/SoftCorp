@@ -23,8 +23,9 @@ export interface IAdaptedData {
   T: string;
 }
 
-const dataArrayAdapter = (): IAdaptedData[] => {
-  const result: IAdaptedData[] = dataArray.map((item: IData) => {
+export const initFetch = () => {
+  //Adapt data.json with Keys
+  const adaptedArray: IAdaptedData[] = dataArray.map((item: IData) => {
     //set Goods Category
     const productCategoryId = item.G;
     const adaptedItem = Object.assign(item);
@@ -32,12 +33,7 @@ const dataArrayAdapter = (): IAdaptedData[] => {
     adaptedItem!.T = namesArray[productCategoryId]!.B[item.T].N;
     return { ...adaptedItem } as IAdaptedData;
   });
-  return result;
-};
-
-const adaptedArray = dataArrayAdapter();
-
-export const shoppingCarouselAdapter = () => {
+  //Map Data for accordion component
   let currentCategory = "";
   let index = 0;
   const result = {};

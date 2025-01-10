@@ -10,7 +10,7 @@
           </v-col>
           <v-col cols="12" sm="6">
             <ShoppingCart />
-            Общая стоимость: Р 12350.50
+            <span v-show="overallPrice">Общая стоимость: ₽ {{ overallPrice }}</span>
           </v-col>
         </v-row>
       </v-container>
@@ -23,7 +23,8 @@ import { Component, Vue } from "vue-property-decorator";
 import NavBar from "./components/NavBar.vue";
 import ShoppingCart from "./components/ShoppingCart.vue";
 import ShoppingList from "./components/ShoppingList.vue";
-import { shoppingCarouselAdapter } from "./adapters/dataAdapter";
+import { initFetch } from "./adapters/dataAdapter";
+import store from "./store";
 
 @Component({
   components: {
@@ -37,7 +38,11 @@ import { shoppingCarouselAdapter } from "./adapters/dataAdapter";
 export default class App extends Vue {
   public data = null;
   public mounted(): void {
-    this.data = shoppingCarouselAdapter();
+    this.data = initFetch();
+  }
+
+  public get overallPrice(): number {
+    return store.getters.getShoppingCartOverallPrice;
   }
 }
 </script>

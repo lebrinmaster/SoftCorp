@@ -18,7 +18,6 @@
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import store from '../store';
-import { IAdaptedData } from '../adapters/dataAdapter';
 
 @Component
 export default class ShoppingCartItem extends Vue {
@@ -29,11 +28,16 @@ export default class ShoppingCartItem extends Vue {
     }
 
     public get currencyExchangedValue(): string {
-        return `₽ ${store.state.currencyExchangeValue * this.data.P}`;
+        return `₽ ${store.state.currencyExchangeValue * this.data.P * this.itemQuantity}`;
     }
 
-    public onItemQuantityChange(num: number):void {
-        store.commit('changeShoppingCartItemQuantity', {id: this.data.T, num})
+    public onItemQuantityChange(value: number):void {
+        const num: number = Math.abs(value);
+        if(num <= this.data.P) {
+            store.commit('changeShoppingCartItemQuantity', {id: this.data.T, num})
+        } else {
+            store.commit('changeShoppingCartItemQuantity', {id: this.data.T, num: this.data.P})
+        }
     }
 
     public onShoppingCartItemDelete():void {
